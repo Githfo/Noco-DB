@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { message } from 'ant-design-vue'
-import { useI18n } from 'vue-i18n'
+import type { RequestParams } from 'nocodb-sdk'
 import UsersModal from './user-management/UsersModal.vue'
 import FeedbackForm from './user-management/FeedbackForm.vue'
 import {
   extractSdkResponseErrorMsg,
   onBeforeMount,
-  projectRoleTagColors,
   ref,
   useApi,
   useClipboard,
   useDashboard,
+  useI18n,
   useNuxtApp,
   useProject,
   useUIPermission,
@@ -61,7 +61,7 @@ const loadUsers = async (page = currentPage, limit = currentLimit) => {
         offset: searchText.value.length === 0 ? (page - 1) * limit : 0,
         query: searchText.value,
       },
-    } as any)
+    } as RequestParams)
     if (!response.users) return
 
     totalRows = response.users.pageInfo.totalRows ?? 0
@@ -128,7 +128,7 @@ const resendInvite = async (user: User) => {
   if (!project.value?.id) return
 
   try {
-    await api.auth.projectUserResendInvite(project.value.id, user.id, null)
+    await api.auth.projectUserResendInvite(project.value.id, user.id)
 
     // Invite email sent successfully
     message.success(t('msg.success.inviteEmailSent'))
